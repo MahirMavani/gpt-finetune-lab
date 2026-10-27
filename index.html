@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT-2 Fine-Tuning Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar"><div class="brandmark">✳</div><div><div class="eyebrow">NLP MODEL WORKBENCH</div><div class="brand">GPT-2 Fine-Tuning Lab</div></div><div class="status-pill" id="connectionStatus">Backend not connected</div></header>
+    <section class="hero">
+      <div class="hero-copy"><div class="eyebrow">CUSTOM-STYLE LANGUAGE MODEL</div><h1>Teach GPT-2 a new<br><span>writing style.</span></h1><p>Use synthetic text, fine-tune a pretrained model, inspect training loss, and compare generations side by side.</p>
+      <div class="hero-tags"><span>● Synthetic dataset</span><span>● Causal language modelling</span><span>● Base vs fine-tuned</span></div></div>
+      <div class="hero-art"><div class="orb orb1"></div><div class="orb orb2"></div><div class="model-card"><div class="model-card-head"><span class="pulse"></span> MODEL STATUS</div><div class="model-name">GPT-2 <span class="tiny-badge">124M</span></div><div class="model-line"></div><div class="model-line short"></div><div class="model-foot"><span>BASE MODEL</span><span id="modelState">Awaiting backend</span></div></div></div>
+    </section>
+    <section class="metrics">
+      <div class="metric"><span class="metric-label">DATA SAMPLES</span><strong id="sampleCount">30</strong><small>synthetic examples</small></div>
+      <div class="metric"><span class="metric-label">DATA CATEGORIES</span><strong>03</strong><small>campus · product · story</small></div>
+      <div class="metric"><span class="metric-label">TRAINING STATUS</span><strong id="trainStateMetric">Ready</strong><small id="trainStateSub">Waiting for a run</small></div>
+      <div class="metric"><span class="metric-label">LAST TRAINING LOSS</span><strong id="lossMetric">—</strong><small>updates during training</small></div>
+    </section>
+    <nav class="tabs"><button class="tab active" data-tab="dataset">01&nbsp; Dataset lab</button><button class="tab" data-tab="training">02&nbsp; Training studio</button><button class="tab" data-tab="generation">03&nbsp; Generation lab</button></nav>
+    <main>
+      <section class="panel tab-panel active" id="panel-dataset">
+        <div class="section-heading"><div><div class="eyebrow">YOUR CORPUS</div><h2>Dataset lab</h2><p>Upload your own synthetic examples or start with the included dataset.</p></div><button class="btn btn-secondary" id="downloadDataset">↓ Download CSV</button></div>
+        <div class="upload-zone"><div class="upload-icon">↑</div><div class="upload-text"><strong>Bring your own text</strong><span>CSV with a <code>text</code> column or TXT with one example per line</span></div><label class="btn btn-secondary file-btn">Choose file<input type="file" id="datasetFile" accept=".csv,.txt"></label><button class="btn btn-ghost" id="useSample">Use sample dataset</button></div>
+        <div class="data-toolbar"><div><strong>Active training examples</strong><span id="datasetFilename">synthetic_text_dataset.csv · built in</span></div><span class="count-chip" id="datasetCount">30 rows</span></div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>Category</th><th>Text sample</th></tr></thead><tbody id="datasetRows"></tbody></table></div>
+        <p class="footnote">All included examples are fictional synthetic data created for this academic demonstration.</p>
+      </section>
+      <section class="panel tab-panel" id="panel-training">
+        <div class="section-heading"><div><div class="eyebrow">MODEL OPTIMIZATION</div><h2>Training studio</h2><p>Continue training the pretrained GPT-2 model on your active corpus.</p></div><span class="badge" id="checkpointBadge">Checkpoint not yet created</span></div>
+        <div class="settings-grid">
+          <label class="setting"><span>Epochs <b id="epochsValue">1</b></span><input id="epochs" type="range" min="1" max="3" value="1"><small>More epochs mean more passes over your dataset.</small></label>
+          <label class="setting"><span>Learning rate <b id="lrValue">0.00002</b></span><select id="learningRate"><option value="0.00001">1e-5</option><option value="0.00002" selected>2e-5</option><option value="0.00003">3e-5</option><option value="0.00005">5e-5</option></select><small>Controls the size of weight updates.</small></label>
+          <label class="setting"><span>Batch size <b id="batchValue">1</b></span><select id="batchSize"><option>1</option><option>2</option><option>4</option></select><small>Start with 1 for a lighter CPU run.</small></label>
+          <label class="setting"><span>Max sequence length <b id="seqValue">96</b></span><select id="seqLength"><option>64</option><option selected>96</option><option>128</option><option>160</option></select><small>Longer sequences use more memory.</small></label>
+        </div>
+        <div class="training-actions"><button class="btn btn-primary" id="startTraining">▶ Start fine-tuning</button><span class="muted" id="trainingMessage">Ready to start a short training run.</span></div>
+        <div class="loss-card"><div class="loss-header"><div><strong>Training loss</strong><p>Reported loss by logging step</p></div><div class="loss-legend"><span></span>Loss</div></div><div class="chart-area"><svg id="lossChart" viewBox="0 0 760 220" preserveAspectRatio="none" role="img" aria-label="Training loss chart"><text x="380" y="105" text-anchor="middle" fill="#71809b" font-size="13">Your loss curve will appear here after training starts.</text></svg></div><div class="chart-foot"><span id="lossSteps">0 logged steps</span><span id="checkpointPath">Saved checkpoint: fine_tuned_gpt2/</span></div></div>
+        <div class="notice"><strong>Compute note</strong><span>First model download can take time. CPU training may be slow; use a GPU backend for a faster demo. The backend must stay running while training.</span></div>
+      </section>
+      <section class="panel tab-panel" id="panel-generation">
+        <div class="section-heading"><div><div class="eyebrow">INFERENCE & EVALUATION</div><h2>Generation lab</h2><p>Use the same prompt and sampling settings to compare both models.</p></div><span class="badge badge-purple" id="generationCheckpoint">Base model available after backend starts</span></div>
+        <label class="prompt-label" for="prompt">STARTING PROMPT</label><textarea id="prompt" rows="3">ANNOUNCEMENT: The AI and Machine Learning Club</textarea>
+        <div class="generation-controls"><label>New tokens <select id="maxTokens"><option>30</option><option selected>55</option><option>80</option><option>100</option></select></label><label>Temperature <select id="temperature"><option value="0.5">0.5</option><option value="0.7">0.7</option><option value="0.8" selected>0.8</option><option value="1.0">1.0</option></select></label><label>Top-p <select id="topP"><option value="0.8">0.80</option><option value="0.9">0.90</option><option value="0.92" selected>0.92</option><option value="0.95">0.95</option></select></label><button class="btn btn-primary" id="generateBtn">✦ Generate comparison</button></div>
+        <div class="output-grid"><article class="output-card"><div class="output-head"><span class="model-dot base-dot"></span><div><strong>Base GPT-2</strong><small>Pretrained checkpoint</small></div><span class="output-tag">BASE</span></div><div class="output-text" id="baseOutput">Your base model output will appear here.</div></article><article class="output-card tuned"><div class="output-head"><span class="model-dot tuned-dot"></span><div><strong>Fine-tuned GPT-2</strong><small>Custom synthetic text style</small></div><span class="output-tag purple">TUNED</span></div><div class="output-text" id="tunedOutput">Train the model to enable this comparison.</div></article></div>
+        <p class="footnote">Fine-tuning influences writing patterns; a small dataset does not guarantee factual or coherent generations.</p>
+      </section>
+    </main>
+    <footer><span>GPT-2 Fine-Tuning Lab</span><span>Academic prototype · synthetic data only</span></footer>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
