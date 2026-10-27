@@ -11,7 +11,13 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, Trainer, TrainingA
 BASE_MODEL = os.getenv("BASE_MODEL", "openai-community/gpt2")
 MODEL_DIR = Path(os.getenv("MODEL_DIR", "/data/fine_tuned_gpt2"))
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "/tmp/gpt2_training_output"))
-MODEL_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    # /data only exists when persistent storage is attached (e.g. on a Hugging Face Space);
+    # fall back to ephemeral storage so the API still starts without it.
+    MODEL_DIR = Path("/tmp/fine_tuned_gpt2")
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
 app = FastAPI(title="GPT-2 Fine-Tuning Lab API", version="1.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
 
