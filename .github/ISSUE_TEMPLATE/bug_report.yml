@@ -1,0 +1,11 @@
+name: Bug Report
+description: Report an issue in GPT-2 Fine-Tuning Lab
+labels: ["bug"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Description
+      placeholder: e.g. Loss calculation fails on custom CSV column
+    validations:
+      required: true

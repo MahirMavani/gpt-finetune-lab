@@ -1,33 +1,96 @@
-# Custom-Style GPT-2 Fine-Tuning Lab — Netlify + Python API
+# 🧠 Custom-Style GPT-2 Fine-Tuning Lab
 
-This project is split into:
-- `frontend/`: static dashboard published by Netlify.
-- `backend/`: FastAPI + PyTorch + Hugging Face Transformers service, suitable for a Docker host such as Hugging Face Spaces.
-- `data/synthetic_text_dataset.csv`: synthetic examples for the assignment.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![HuggingFace](https://img.shields.io/badge/Transformers-HuggingFace-FFD21E.svg)](https://huggingface.co/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Netlify Status](https://img.shields.io/badge/Frontend-Netlify-00C7B7.svg)](https://www.netlify.com/)
 
-## Deployment overview
+> **An interactive full-stack laboratory for training, fine-tuning, and evaluating custom autoregressive language models (GPT-2) with synthetic datasets, hyperparameter tuning, and real-time generation previews.**
 
-1. Deploy `backend/` as a Docker Space or another persistent Python host.
-2. Confirm the backend's `/health` endpoint works.
-3. Push this whole project to GitHub.
-4. Import the GitHub repository into Netlify. `netlify.toml` publishes the `frontend/` folder.
-5. Open the Netlify website. The first API call will ask for your backend URL; enter the backend base URL (for example `https://YOUR-SPACE-NAME.hf.space`) and it will be saved in that browser's local storage.
-6. Use Dataset Lab, Training Studio, and Generation Lab.
+---
 
-## Backend hosting note
+## 📖 Overview
 
-The GPT-2 training service requires Python, PyTorch, memory, and model downloads. Netlify hosts the static frontend, not this training process. A Docker-based Hugging Face Space can host FastAPI, but check the current account/hardware requirements and persistence settings before relying on it for a free, always-on service. GPU hardware may incur cost. For a classroom demo, you can also train on a GPU notebook and use a separate inference service, but a notebook session is not a reliable always-on backend.
+The **Custom-Style GPT-2 Fine-Tuning Lab** demystifies LLM fine-tuning by providing an end-to-end sandbox. It bridges the gap between raw Python PyTorch scripts and an intuitive visual dashboard:
+1. **Dataset Lab**: Inspect, filter, and validate synthetic training datasets (CSV/JSON).
+2. **Training Studio**: Configure training epochs, learning rates, batch sizes, and warm-up steps with live loss tracking.
+3. **Generation Lab**: Test prompt completions, adjust temperature/top_k/top_p, and evaluate style transfer in real-time.
 
-## Run the backend locally
+---
 
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port 7860
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+    Browser["Client Dashboard (HTML5 / Vanilla JS)"]
+    Netlify["Netlify CDN (Static Frontend)"]
+    FastAPI["FastAPI Inference & Training Server"]
+    HFSpace["Hugging Face Docker / Cloud GPU"]
+    PyTorch["PyTorch + HF Transformers (GPT-2)"]
+
+    Browser --> Netlify
+    Browser -->|"REST API / WebSockets"| FastAPI
+    FastAPI --> HFSpace
+    FastAPI --> PyTorch
 ```
 
-## Local frontend
-Open `frontend/index.html` in a browser for layout testing, but browser API calls need the backend URL and correct CORS configuration. For production use Netlify deployment.
+---
 
-## Netlify
-The root `netlify.toml` sets the publish directory to `frontend`. No Node build step is required.
+## 🛠️ Tech Stack
+
+- **Frontend**: Vanilla JavaScript (ES6+), CSS3 Dark Mode Theme, Netlify CDN
+- **Backend API**: FastAPI, Uvicorn, Python 3.10+
+- **Deep Learning**: PyTorch, Hugging Face `transformers`, `datasets`, `accelerate`
+- **Deployment**: Docker, Hugging Face Spaces / Cloud VM
+
+---
+
+## 📁 Repository Structure
+
+```text
+gpt-finetune-lab/
+├── app.js                      # Reactive frontend UI controller
+├── app.py                      # FastAPI server handling training & inference
+├── index.html                  # Multi-panel interactive studio UI
+├── styles.css                  # Dark-mode dashboard stylesheet
+├── requirements.txt            # Python dependencies
+├── Dockerfile                  # Container definition for backend host
+├── synthetic_text_dataset.csv  # Curated synthetic domain dataset
+├── netlify.toml                # Netlify deployment rules
+├── LICENSE                     # MIT License
+└── README.md                   # Project documentation
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Run Backend Locally
+```bash
+# Clone the repository
+git clone https://github.com/MahirMavani/gpt-finetune-lab.git
+cd gpt-finetune-lab
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Launch FastAPI server
+uvicorn app:app --host 0.0.0.0 --port 7860 --reload
+```
+
+### 2. Run Frontend
+Open `index.html` in your browser, or serve it locally using any static web server (e.g. `npx serve .`). Enter `http://localhost:7860` as the backend endpoint.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a PR.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
